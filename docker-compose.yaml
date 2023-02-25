@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  minio:
+    container_name: minio-bucket-storage
+    image: minio/minio:RELEASE.2023-02-22T18-23-45Z
+    command: server --console-address ":9001" /data
+    environment:
+      TZ: Asia/Bangkok
+      MINIO_ROOT_USER: user
+      MINIO_ROOT_PASSWORD: passw0rd
+    volumes:
+      - minio_storage:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: curl --fail http://localhost:9000/minio/health/live || exit 1
+      timeout: 30s
+      interval: 10s
+      retries: 10
+    logging:
+        options:
+            max-size: 1g
+
+volumes:
+  minio_storage: {}
